@@ -1,22 +1,27 @@
-const tasks = [];
+const repository = require("../repositories/taskRepository");
 
 function addTask(title) {
-    if (!title || title.trim() === "") {
+
+    if (!title) {
         throw new Error("Título obrigatório");
     }
 
+    if (typeof title !== 'string') {
+        throw new Error("Título deve ser uma string");
+    }
+
     const task = {
-        id: tasks.length + 1,
+        id: Date.now(),
         title
     };
 
-    tasks.push(task);
+    repository.save(task);
 
     return task;
 }
 
 function getTasks() {
-    return tasks;
+    return repository.findAll();
 }
 
 module.exports = {
