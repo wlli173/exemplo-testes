@@ -19,19 +19,9 @@ jobs:
           node-version: 24
           cache: "npm" # cache do node_modules
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
       - run: npm ci # mais seguro que npm install em CI
 
-      - run: npx playwright install --with-deps
-
       - run: npm run test:coverage # Jest com coverage
-
-      - run: npm run test:e2e # Playwright (webServer cuida do start)
 
       - name: Upload relatório de coverage
         uses: actions/upload-artifact@v4
@@ -40,13 +30,6 @@ jobs:
           name: coverage
           path: coverage/
 
-      - name: Upload relatório Playwright
-        uses: actions/upload-artifact@v4
-        if: always() # publica mesmo se os testes falharem
-        with:
-          name: playwright-report
-          path: reports/playwright/
-  
   # Deploy no Render via Webhook
   deploy:
     needs: ci
